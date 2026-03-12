@@ -36,5 +36,17 @@ def get_match_history(puuid:str = None, start: str = 0, count: str = 20) -> list
     match_request = requests.get(ROOT + match_endpoint + "&api_key=" + L_KEY) 
     data = match_request.json()
     return data
-# print(get_puuid("Wold5182", "NA1"))
-print(get_match_history("vDWCMdm4Cmdgwetkt-euNs4otmWPe24Vzts1-l9_6orNo5_dLFhU61CNwH-P7IAuXadRBHiS-6Gu_Q"))
+
+def get_match_data(match_id:str = None):
+    match_endpoint = f"/lol/match/v5/matches/{match_id}"
+    match_request = requests.get(ROOT + match_endpoint + "?api_key=" + L_KEY) 
+    data = match_request.json()
+    return data
+
+def get_match_winner(match_data):
+    print(match_data['info']["participants"][0]["win"])
+
+matchid = (get_match_history("vDWCMdm4Cmdgwetkt-euNs4otmWPe24Vzts1-l9_6orNo5_dLFhU61CNwH-P7IAuXadRBHiS-6Gu_Q", "0", "1"))
+# print(matchid.type())
+# print(get_match_data(matchid[0]))
+get_match_winner(get_match_data(matchid[0]))
