@@ -35,7 +35,9 @@ def get_match_history(puuid:str = None, start: str = 0, count: str = 20) -> list
     match_endpoint = f"/lol/match/v5/matches/by-puuid/{puuid}/ids?start={start}&count={count}"
     match_request = requests.get(ROOT + match_endpoint + "&api_key=" + L_KEY) 
     data = match_request.json()
-    return data
+    match_list = list(map(Match, data))
+    print(data)
+    return match_list
 
 def get_match_data(match_id:str = None):
     match_endpoint = f"/lol/match/v5/matches/{match_id}"
@@ -43,10 +45,36 @@ def get_match_data(match_id:str = None):
     data = match_request.json()
     return data
 
-def get_match_winner(match_data):
-    print(match_data['info']["participants"][0]["win"])
+def get_match_history_data(match_data: list[Match]): 
+    for i in match_data:
+        print((i.get_match_data())['info']["participants"][0]["win"])
 
-matchid = (get_match_history("vDWCMdm4Cmdgwetkt-euNs4otmWPe24Vzts1-l9_6orNo5_dLFhU61CNwH-P7IAuXadRBHiS-6Gu_Q", "0", "1"))
-# print(matchid.type())
-# print(get_match_data(matchid[0]))
-get_match_winner(get_match_data(matchid[0]))
+class Match:
+
+    def __init__(self, matchID):
+        self.__matchID = matchID
+        # self.__win 
+
+    def __str__(self):
+        return f"({self.__matchID})"
+
+    def get_matchID(self):       
+        return f"{self.__matchID}"
+    
+    def get_match_data(self):
+        match_endpoint = f"/lol/match/v5/matches/{self.__matchID}"
+        match_request = requests.get(ROOT + match_endpoint + "?api_key=" + L_KEY) 
+        data = match_request.json()
+        return data 
+
+    
+history = get_match_history(get_puuid("Wold5182", "NA1"))
+# print(get_match_data(history[0].get_matchID()))
+
+# for i in history:
+#     print(i)
+print(get_match_history_data(history))
+    # get match history--> loop through history using async to get each individual match data, 
+    # store that data in list to be accessed later
+    # this will be the real get match history class, so I do not have to display a bunch of IDs
+
